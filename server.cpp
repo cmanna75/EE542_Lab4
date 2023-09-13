@@ -11,7 +11,7 @@
 using namespace std;
 
 #define PORT	 8080
-#define MAXLINE 2000
+#define MAXLINE 1500
 
 // Driver code
 int main() {
@@ -57,11 +57,12 @@ int main() {
 		}
 
 		else{
-    			myFile.write (buffer, MAXLINE);
+    			myFile.write (&buffer[1], 1499);
 		}
 //buffer[n] = '\0';
-		//printf("Client : %s\n", buffer);
-		sendto(sockfd, (const char *)hello, strlen(hello),
+		unsigned char seq = (unsigned char) buffer[0];
+		printf("Client : %d\n", seq);
+		sendto(sockfd, buffer, 1,
 			MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
 				len);
 		//std::cout<<"Hello message sent."<<std::endl;
