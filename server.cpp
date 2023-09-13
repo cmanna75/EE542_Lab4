@@ -7,9 +7,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <fstream>
+using namespace std;
 
 #define PORT	 8080
-#define MAXLINE 1024
+#define MAXLINE 1500
 
 // Driver code
 int main() {
@@ -41,20 +43,30 @@ int main() {
 	}
 	
 	socklen_t len;
-int n;
+	int n;
 
 	len = sizeof(cliaddr); //len is value/result
+	ofstream myFile ("data.bin", ios::out | ios::binary);
+    			
+	while(1){
+		n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+					MSG_WAITALL, ( struct sockaddr *) &cliaddr,
+					&len);
+		if(strcmp (buffer, (const char*)"Done") == 0){
+			break;
+		}
 
-	n = recvfrom(sockfd, (char *)buffer, MAXLINE,
-				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
-				&len);
-	buffer[n] = '\0';
-	printf("Client : %s\n", buffer);
-	sendto(sockfd, (const char *)hello, strlen(hello),
-		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
-			len);
-	std::cout<<"Hello message sent."<<std::endl;
-	
+		else{
+    			myFile.write (&buffer[1], 1499);
+		}
+//buffer[n] = '\0';
+		unsigned char seq = (unsigned char) buffer[0];
+		printf("Client : %d\n", seq);
+		sendto(sockfd, buffer, 1,
+			MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
+				len);
+		//std::cout<<"Hello message sent."<<std::endl;
+	}
 	return 0;
 }
 
