@@ -33,4 +33,13 @@ while getopts ":t:f:I:" opt; do
 	esac
 done
 
-wc -c <"$filename"
+filesize=$(wc -c <"$filename")
+echo "filesize: $filesize (B)"
+start_time=`date +%s%N`
+./client
+end_time=`date +%s%N`
+total_time_ns=$((end_time - start_time))
+total_time=$(bc <<< "scale=6; $total_time_ns / 1000000000")
+throughput=$(bc <<< "scale=6; $filesize / ($total_time * 1024 * 1024)")
+echo "total time: $total_time (s)" 
+echo "throughput:  $throughput (MBps)"
