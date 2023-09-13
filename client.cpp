@@ -39,27 +39,40 @@ int main(int argc, char* argv[]) {
 	int n;
 	socklen_t len;
 	
-
-
 	char buf[1500];
+	unsigned char ack;
+	unsigned char seq = 1;
 	ifstream myFile ("test/data.bin", ios::in | ios::binary);
-    	while(myFile.read (buf, 1500)){
+    	while(myFile.read (&buf[1], 1498)){
 
-
+		buf[0] = seq;
+		
 		sendto(sockfd, buf, strlen(buf),
 			MSG_CONFIRM, (const struct sockaddr *) &servaddr,
 				sizeof(servaddr));
-		std::cout<<"Binary Sent."<<std::endl;
 			
-		n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+		n = recvfrom(sockfd, (char *)buffer, 1,
 					MSG_WAITALL, (struct sockaddr *) &servaddr,
 					&len);
+		ack = (unsigned char) buffer[0];
+		if(seq == ack){
+			seq++;
+			if(seq == 255){
+				seq = 1;
+			}
+		}
+		else{
+			printf("Error: ack: %d seq: %d\n", seq, ack);
+			break;
+		}
 		//buffer[n] = '\0';
 		//std::cout<<"Server :"<<buffer<<std::endl;
 	}
+	/*
 	sendto(sockfd, (const char *) hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &servaddr,
 			sizeof(servaddr));
+	*/
 	std::cout<<"done"<<std::endl;
 	close(sockfd);
 	return 0;
