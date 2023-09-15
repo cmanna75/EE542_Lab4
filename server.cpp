@@ -10,14 +10,16 @@
 #include <fstream>
 using namespace std;
 
-#define PORT	 8080
+//#define PORT	 8080
 #define MAXLINE 1500
 
 // Driver code
-int main() {
+int main(int arc, char* argv[]) {
 	int sockfd;
 	char buffer[MAXLINE];
 	const char *hello = "Hello from server";
+	int port = atoi(argv[1]);
+	char* name = argv[2];
 	struct sockaddr_in servaddr, cliaddr;
 	
 	// Creating socket file descriptor
@@ -32,7 +34,7 @@ int main() {
 	// Filling server information
 	servaddr.sin_family = AF_INET; // IPv4
 	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons(PORT);
+	servaddr.sin_port = htons(port);
 	
 	// Bind the socket with the server address
 	if ( bind(sockfd, (const struct sockaddr *)&servaddr,
@@ -46,7 +48,7 @@ int main() {
 	int n;
 
 	len = sizeof(cliaddr); //len is value/result
-	ofstream myFile ("data.bin", ios::out | ios::binary);
+	ofstream myFile (name, ios::out | ios::binary);
     			
 	while(1){
 		//memset(buffer,'\0',MAXLINE);
@@ -70,6 +72,7 @@ int main() {
 		//std::cout<<"Hello message sent."<<std::endl;
 	}
 	myFile.close();
+	close(sockfd);
 	return 0;
 }
 
