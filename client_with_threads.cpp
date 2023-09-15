@@ -9,6 +9,8 @@
 #include <cmath>
 #include <fcntl.h>
 #include <cstdint>
+#include <arpa/inet.h> //need for htons and such
+#include <netdb.h> //needed for gethostbyname
 
 using namespace std;
 
@@ -198,7 +200,7 @@ void *checkServer(void *arg) {
 // Check if a datagram is new or has been received before
 int isNewDGRAM(int seqNum) {
     if (seqNum >= 0 && seqNum <= totalSeq) {
-        if (rcvDGRAMS[seqNum == 0]) {
+        if (rcvDGRAMS[seqNum] == 0) {
             rcvDGRAMS[seqNum] = 1;
             return 1;
         } else
