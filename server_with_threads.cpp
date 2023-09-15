@@ -11,6 +11,8 @@
 #include <ctime>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <arpa/inet.h> //need for htons and such
+#include <netdb.h> //needed for gethostbyname
 
 using namespace std;
 
@@ -95,8 +97,8 @@ int main(int argc, char *argv[]) {
 
     FILE *fp = NULL;
 
-    // Initialize buffer with null bytes
-    if ((chptr = memset(buffer, '\0', PAYLOAD)) == NULL) {
+    // Initialize buffer with null bytes , added char casting
+    if ((chptr = (unsigned char*)memset(buffer, '\0', PAYLOAD)) == NULL) {
         cout << "Failed memset";
     }
 
