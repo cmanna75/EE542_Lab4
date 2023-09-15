@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <fstream>
 using namespace std;
-#define PORT	 8080
+//#define PORT	 8080
 #define MAXLINE 1024
 #define SERVER_IP_ADDR "192.168.2.19"
 
@@ -21,6 +21,8 @@ int main(int argc, char* argv[]) {
 	int sockfd;
 	char buffer[MAXLINE];
 	const char *hello = "Done";
+	int port = atoi(argv[1]);
+	char* filename = argv[2];
 	struct sockaddr_in	 servaddr;
 
 	// Creating socket file descriptor
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
 	
 	// Filling server information
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(PORT);
+	servaddr.sin_port = htons(port);
 	servaddr.sin_addr.s_addr = inet_addr(SERVER_IP_ADDR);
 	
 	int n;
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]) {
 	char buf[1500];
 	unsigned char ack;
 	unsigned char seq = 1;
-	ifstream myFile ("test/data.bin", ios::in | ios::binary);
+	ifstream myFile (filename, ios::in | ios::binary);
 		/*
     	while(myFile.read (&buf[1], 1499)){
 
@@ -75,8 +77,8 @@ int main(int argc, char* argv[]) {
 		//myFile.seekg(0, ios::cur);
 		myFile.read(buf+1,1499);
 		buf[0] = seq;
-		if(myFile.gcount() < 1499)
-			cout<<myFile.gcount()<<endl;
+		//if(myFile.gcount() < 1499)
+			//cout<<myFile.gcount()<<endl;
 		sendto(sockfd, buf, myFile.gcount() + 1, MSG_CONFIRM, (const struct sockaddr *)&servaddr, sizeof(servaddr));
 		n = recvfrom(sockfd, (char *)buffer, 1,
 					MSG_WAITALL, (struct sockaddr *) &servaddr,
@@ -97,7 +99,7 @@ int main(int argc, char* argv[]) {
 		MSG_CONFIRM, (const struct sockaddr *) &servaddr,
 			sizeof(servaddr));
 	std::cout<<"done"<<std::endl;
-	cout<<myFile.gcount()<<endl;
+	//cout<<myFile.gcount()<<endl;
 	close(sockfd);
 	return 0;
 }
