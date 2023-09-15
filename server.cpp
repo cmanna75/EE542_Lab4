@@ -49,24 +49,27 @@ int main() {
 	ofstream myFile ("data.bin", ios::out | ios::binary);
     			
 	while(1){
+		//memset(buffer,'\0',MAXLINE);
+		//taking out msg_waitall
 		n = recvfrom(sockfd, (char *)buffer, MAXLINE,
-					MSG_WAITALL, ( struct sockaddr *) &cliaddr,
+					0, ( struct sockaddr *) &cliaddr,
 					&len);
-		if(strcmp (buffer, (const char*)"Done") == 0){
+		if(strncmp (buffer, "Done",4) == 0){
 			break;
 		}
 
 		else{
-    			myFile.write (&buffer[1], 1499);
+    			myFile.write (&buffer[1], n-1);
 		}
 //buffer[n] = '\0';
 		unsigned char seq = (unsigned char) buffer[0];
-		printf("Client : %d\n", seq);
+		//printf("Client : %d\n", seq);
 		sendto(sockfd, buffer, 1,
 			MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
 				len);
 		//std::cout<<"Hello message sent."<<std::endl;
 	}
+	myFile.close();
 	return 0;
 }
 
