@@ -38,16 +38,17 @@ echo "splitting files"
 split -n 4 -a 1 "$filename" output_part_
 echo "sending files" 
 start_time=`date +%s%N`
-./client 8080 output_part_a &
-./client 8081 output_part_b &
-./client 8082 output_part_c &
-./client 8083 output_part_d &
+./sender $ip_addr 8080 0 output_part_a &
+./sender $ip_addr 8081 1 output_part_b &
+./sender $ip_addr 8082 2 output_part_c &
+./sender $ip_addr 8083 3 output_part_d &
 wait
 end_time=`date +%s%N`
+rm output_part_*
 echo "filesize: $filesize (B)"
 total_time_ns=$((end_time - start_time))
 total_time=$(bc <<< "scale=6; $total_time_ns / 1000000000")
-throughput=$(bc <<< "scale=6; $filesize / ($total_time * 1024 * 1024)")
+throughput=$(bc <<< "scale=6; ($filesize * 8) / ($total_time * 1024 * 1024)")
 echo "total time: $total_time (s)" 
-echo "throughput:  $throughput (MBps)"
+echo "throughput:  $throughput (Mbps)"
 
