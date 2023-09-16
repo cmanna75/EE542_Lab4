@@ -2,21 +2,17 @@
 
 #receiver bash script!
 
-echo 'Hello'
+echo 'Hello! Running File Transfer Protocol Receiver'
 
 usage() {
 
-	echo "-t sets transmission unit (default is 1500)"
 	echo "-f file name, defualt: data.bin"
 	exit 1
 }
 mtu=1500
 filename="data.bin"
-while getopts ":t:f:I:" opt; do
+while getopts "f:" opt; do
 	case $opt in
-		t)
-			mtu="$OPTARG"
-			;;
 		f)
 			filename="$OPTARG"
 			;;

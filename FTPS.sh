@@ -2,7 +2,7 @@
 
 #sender bash script
 
-echo 'Hello'
+echo 'Hello! Running File Transfer Protocol Sender'
 
 usage() {
 
@@ -34,9 +34,9 @@ while getopts ":t:f:I:" opt; do
 done
 
 filesize=$(wc -c <"$filename")
-echo "splitting files"
+echo "Splitting file"
 split -n 4 -a 1 "$filename" output_part_
-echo "sending files" 
+echo "Sending files" 
 start_time=`date +%s%N`
 ./sender $ip_addr 8080 0 output_part_a &
 ./sender $ip_addr 8081 1 output_part_b &
@@ -45,10 +45,11 @@ start_time=`date +%s%N`
 wait
 end_time=`date +%s%N`
 rm output_part_*
-echo "filesize: $filesize (B)"
+echo "File Transfer Complete Results Below!"
+echo "Filesize: $filesize (B)"
 total_time_ns=$((end_time - start_time))
 total_time=$(bc <<< "scale=6; $total_time_ns / 1000000000")
 throughput=$(bc <<< "scale=6; ($filesize * 8) / ($total_time * 1024 * 1024)")
-echo "total time: $total_time (s)" 
-echo "throughput:  $throughput (Mbps)"
+echo "Total Time: $total_time (s)" 
+echo "Throughput:  $throughput (Mbps)"
 
