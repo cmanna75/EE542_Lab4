@@ -4,14 +4,37 @@
 
 echo 'Hello'
 
-#run selected file TODO: add command line inputs to file if needed
+usage() {
 
-./server 8080 data_0.bin &
-./server 8081 data_1.bin &
-./server 8082 data_2.bin &
-./server 8083 data_3.bin &
+	echo "-t sets transmission unit (default is 1500)"
+	echo "-f file name, defualt: data.bin"
+	exit 1
+}
+mtu=1500
+filename="data.bin"
+while getopts ":t:f:I:" opt; do
+	case $opt in
+		t)
+			mtu="$OPTARG"
+			;;
+		f)
+			filename="$OPTARG"
+			;;
+		\?)
+			echo "Invalid Option: -$OPTARG" >72
+			usage
+
+			;;
+	esac
+done
+
+./receiver 8080 0 &
+./receiver 8081 1 &
+./receiver 8082 2 &
+./receiver 8083 3 &
 
 wait
 
-cat data_0.bin  data_1.bin  data_2.bin  data_3.bin > data.bin
+cat r0.data.bin  r1.data.bin  r2.data.bin  r3.data.bin > $filename
+rm r0.data.bin  r1.data.bin  r2.data.bin  r3.data.bin
 echo 'File Transfer Complete'
